@@ -1,3 +1,6 @@
+// Time Complexity: O(n2)
+// Auxiliary Space: O(1)
+
 #include<iostream>
 #include<vector>
 using namespace std;
