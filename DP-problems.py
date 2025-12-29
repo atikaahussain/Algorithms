@@ -170,6 +170,7 @@ def unboundedknapsackTD(rodlen,lengthsArr,PricesArr,n,dp):
 def unboundedknapsackBU(rodlen,lengthsArr,PricesArr,n):
     dp=[-1][-1]*len(rodlen)+1
     # initializing dp with some formula base idk
+    # oh its a greedy approach smthg 
     for i in range(lengthsArr[0],rodlen):
         dp[0][i]=i/(lengthsArr[0])*PricesArr[0]
         
