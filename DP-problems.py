@@ -50,7 +50,7 @@ def MaxCoinsTD(nums,T,dp):
     
     for i in range(len(nums)):
         # ans stores the mini return val for specific coin
-        ans=MaxCoinsMain(nums,T-nums[i],dp)
+        ans=MaxCoinsTD(nums,T-nums[i],dp)
         if ans!=float('inf'): minimum=min(minimum,1+ans)
     dp[T]=minimum
     return dp[T]

@@ -9,7 +9,7 @@ def bfsConnected(src,V,adj,visited,result):
     queue.append(src)
     
     while queue:
-        # take out the front of queue sa current, put it in result arr
+        # take out the front of queue as current, put it in result arr
         curr=queue.pop()
         result.append(curr)
         
@@ -116,9 +116,9 @@ def isCyclicInUndirected(adj,visited,src,parent):
         if not visited[neighbour]:
            if isCyclicInUndirected(adj,visited,neighbour,src):
                return True
-        #    if neighbour visited but not the parent of the current then cycle found
-           elif neighbour!=parent:
-               return True
+        # if neighbour visited but not the parent of the current then cycle found
+        elif neighbour!=parent:
+            return True
     return False
 
 # Cycle detection in undirected using DFS
@@ -177,6 +177,10 @@ def PrimsAlgo(adj):
         for vertex,weight in adj[v]:
             if not visited[vertex]:
                 heapq.heappush(pq,(weight,v,vertex))
+        # if we have grid given instead of adj list
+        # for neighbor in range(V):
+            # if not visited[neighbor] and grid[v][neighbor] != 0:
+                # heapq.heappush(pq, (grid[v][neighbor], v, neighbor))/
     return res[1:]
 
 def BellmanFord(edges,V,src):
@@ -186,7 +190,7 @@ def BellmanFord(edges,V,src):
     for i in range(V):
         changed=False
 
-        for u,v,w in edges[i]:
+        for u,v,w in edges:
                
             if dist[u]+w < dist[v]:
                 if i==V-1: # if Negative Weight Cycle
@@ -218,3 +222,86 @@ def FloydWarshall(edges):
             return [-1]
     
     return dist
+
+#Kruskal's ( ElogV / V+E )
+
+def kruskals(edges,V):
+    #Sort edges asc by weight
+    count = 0
+    dsu = DSU(V)
+    res = []
+    for u,v,w in edges:
+        if dsu.find(u)!=dsu.find(v): #No cycle
+            dsu.union(u,v)
+            res.append((u,v,w))
+            count+=1
+            if count == V-1:
+                break
+    
+    return res
+
+class DSU:
+    def __init__(self,n):    
+        self.parent = list(range(n))
+        self.rank = [1] * n
+    
+    def find(self,i):
+        if self.parent[i]!=i:
+            self.parent[i] = self.find(self.parent[i])
+        return self.parent[i]
+    
+    def union(self,u,v):
+        r1 = self.find(u)
+        r2 = self.find(v)
+        if r1 != r2:
+            if self.rank[r1] > self.rank[r2]:
+                self.parent[r2] = r1
+            elif self.rank[r1] < self.rank[r2]:
+                self.parent[r1] = r2
+            else:
+                self.parent[r1] = r2
+                self.rank[r2]+=1
+
+#SCCS Kosaraju
+
+def kosaraju(n, adj):
+    visited = [False] * n
+    stack = []
+
+    # ---------- Step 1: DFS to fill stack ----------
+    def dfs1(u):
+        visited[u] = True
+        for v in adj[u]:
+            if not visited[v]:
+                dfs1(v)
+        stack.append(u)
+
+    for i in range(n):
+        if not visited[i]:
+            dfs1(i)
+
+    # ---------- Step 2: Reverse the graph ----------
+    rev = [[] for _ in range(n)]
+    for u in range(n):
+        for v in adj[u]:
+            rev[v].append(u)
+
+    # ---------- Step 3: Process stack on reversed graph ----------
+    visited = [False] * n
+    sccs = []
+
+    def dfs2(u, comp):
+        visited[u] = True
+        comp.append(u)
+        for v in rev[u]:
+            if not visited[v]:
+                dfs2(v, comp)
+
+    while stack:
+        u = stack.pop()
+        if not visited[u]:
+            comp = []
+            dfs2(u, comp)
+            sccs.append(comp)
+
+    return sccs
